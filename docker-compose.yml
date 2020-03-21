@@ -1,0 +1,11 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mariadb:10.2.31
+    restart: always
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: wirvsvirus
