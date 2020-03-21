@@ -24,9 +24,9 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
-  hello:
+  get-institutions:
     handler: src/get-institutions.handler
     events:
       - http:
           method: get
-          path: hello
+          path: find
