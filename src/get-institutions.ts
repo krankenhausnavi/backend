@@ -7,8 +7,8 @@ const RANDOM_DATA_COUNT: number = 40;
 export const handler: APIGatewayProxyHandler = async (event, _context) => {
     if (
         !event.queryStringParameters['lon']
-        || event.queryStringParameters['lat']
-        || event.queryStringParameters['area']
+        || !event.queryStringParameters['lat']
+        || !event.queryStringParameters['area']
     ) {
         return {
             statusCode: 400,
