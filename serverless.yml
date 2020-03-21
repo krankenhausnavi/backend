@@ -18,15 +18,29 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
+  memorySize: 256
+  timeout: 3
+  versionFunctions: false
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
+  find-institutions:
+    handler: src/find-institutions.handler
+    events:
+      - http:
+          method: get
+          path: institutions
   get-institutions:
     handler: src/get-institutions.handler
     events:
       - http:
           method: get
-          path: find
+          path: institutions/{institutionId}
+          request:
+            # Add validators in gateway later: https://serverless.com/framework/docs/providers/aws/events/apigateway#request-schema-validators
+            parameters:
+              paths:
+                institutionId: true
