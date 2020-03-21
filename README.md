@@ -1,7 +1,14 @@
 # Backend für Krankenhausnavi
 
-## Starten einer Lokalen Instanz
+## Was wird benötigt
+- Serverless Cli: "npm install -g serverless"
 
+## Installation
 ```
-    $ sls 
+    $ npm install
+```
+
+## Starten einer Lokalen Instanz zum Testen
+```
+    $ sls offline start
 ```
