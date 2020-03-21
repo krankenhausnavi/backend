@@ -1,0 +1,33 @@
+{
+  "id": "string|number",
+  "name": "string",
+  "type": "string",
+  "street": "string",
+  "city": "string",
+  "postal_code": "string",
+  "phone_number": "string",
+  "website": "string",
+  "longitude": "number",
+  "latitude": "number",
+  "comment": "string",
+  "opening_hours":[{
+    "day": "string",
+    "start_time": "string",
+    "end_time": "string"
+  }],
+  "resources": [
+    {
+      "type": "string",
+      "max_available": "number",
+      "in_use": "number",
+      "last_update": "timestamp"
+    }
+  ],
+  "waiting_times": [
+    {
+      "type": "string",
+      "waiting_time": "string",
+      "last_update": "timestamp"
+    }
+  ]
+}
