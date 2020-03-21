@@ -5,6 +5,17 @@ import 'source-map-support/register';
 const RANDOM_DATA_COUNT: number = 40;
 
 export const handler: APIGatewayProxyHandler = async (event, _context) => {
+    if (
+        !event.queryStringParameters['lon']
+        || event.queryStringParameters['lat']
+        || event.queryStringParameters['area']
+    ) {
+        return {
+            statusCode: 400,
+            body: "Required request parameters: lon, lat, area"
+        };
+    }
+
     const longitude: number = parseFloat(event.queryStringParameters['lon']);
     const latitude: number = parseFloat(event.queryStringParameters['lat']);
     const area: number = parseFloat(event.queryStringParameters['area']);
