@@ -25,7 +25,7 @@ provider:
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
-    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    # AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     RDS_HOSTNAME: ${file(./config/database.${self:provider.stage}.json):hostname}
     RDS_USERNAME: ${file(./config/database.${self:provider.stage}.json):username}
     RDS_PASSWORD: ${file(./config/database.${self:provider.stage}.json):password}
