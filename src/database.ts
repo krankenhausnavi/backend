@@ -104,6 +104,7 @@ export class Database {
                     inst.website,
                     inst.lat as latitude,
                     inst.lon as longitude,
+                    ST_DISTANCE(POINT(48.78232, 9.17702), POINT(inst.lat, inst.lon)) as distance,
                     CONCAT('[',IFNULL(CONVERT(GROUP_CONCAT(DISTINCTROW JSON_OBJECT(
                             'day', oh.day, 'start_time',
                             oh.start_time, 'end_time',
@@ -189,12 +190,16 @@ export class Database {
                 resources as res,
                 waiting_times as wt
             WHERE
-                 ST_DISTANCE(POINT(?, ?), POINT(inst.lat, inst.lon)) < ?
+                inst.lat + 0.1 < ?
+                AND inst.lon + 0.1 < ?
+                AND inst.lat - 0.1 < ?
+                AND inst.lon - 0.1 < ?
+                AND ST_Distance(POINT(?, ?), POINT(inst.lat, inst.lon)) < ?
                 AND oh.institution_id = inst.id
                 AND res.institution_id = inst.id
                 AND wt.institution_id = inst.id
             GROUP BY inst.id`,
-                [latitude, longitude, latitude, longitude, area],
+                [latitude, longitude, latitude, longitude, latitude, longitude, latitude, longitude, area],
                 (error, dbRecords) => {
                     if (error) {
                         reject(error);
