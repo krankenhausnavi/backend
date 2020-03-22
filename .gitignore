@@ -21,3 +21,4 @@ build
 # Remove configs
 config/*
 !config/*.example.json
+!config/*.schema.json

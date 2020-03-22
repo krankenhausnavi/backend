@@ -22,6 +22,7 @@ export interface IWaitingTime {
 export interface IInstitution {
     id: number,
     name: string,
+    distance?: number,
     type: string,
     street: string,
     city: string,
@@ -99,10 +100,10 @@ export class Database {
                     inst.street,
                     inst.city,
                     inst.postcode,
-                    inst.phone                                                    as phone_number,
+                    inst.phone as phone_number,
                     inst.website,
-                    inst.lat                                                      as latitude,
-                    inst.lon                                                      as longitude,
+                    inst.lat as latitude,
+                    inst.lon as longitude,
                     CONCAT('[',IFNULL(CONVERT(GROUP_CONCAT(DISTINCTROW JSON_OBJECT(
                             'day', oh.day, 'start_time',
                             oh.start_time, 'end_time',
@@ -160,10 +161,11 @@ export class Database {
                     inst.street,
                     inst.city,
                     inst.postcode,
-                    inst.phone                                                    as phone_number,
+                    inst.phone as phone_number,
                     inst.website,
-                    inst.lat                                                      as latitude,
-                    inst.lon                                                      as longitude,
+                    inst.lat as latitude,
+                    inst.lon as longitude,
+                    ST_DISTANCE(POINT(?, ?), POINT(inst.lat, inst.lon)) as distance,
                     CONCAT('[',IFNULL(CONVERT(GROUP_CONCAT(DISTINCTROW JSON_OBJECT(
                                                                 'day', oh.day, 'start_time',
                                                                   oh.start_time, 'end_time',
@@ -192,7 +194,7 @@ export class Database {
                 AND res.institution_id = inst.id
                 AND wt.institution_id = inst.id
             GROUP BY inst.id`,
-                [latitude, longitude, area],
+                [latitude, longitude, latitude, longitude, area],
                 (error, dbRecords) => {
                     if (error) {
                         reject(error);
