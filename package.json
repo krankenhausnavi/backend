@@ -12,6 +12,7 @@
     "deploy:prod": "sls deploy --region us-east-1 --stage prod"
   },
   "dependencies": {
+    "geolib": "^3.2.1",
     "mysql": "^2.18.1",
     "random-location": "^1.1.2",
     "source-map-support": "^0.5.10"

@@ -1,4 +1,6 @@
 import {Connection, ConnectionConfig, createConnection} from 'mysql';
+import { getBoundsOfDistance, getDistance } from 'geolib';
+
 
 export interface IOpeningHour {
     day: string,
@@ -104,7 +106,7 @@ export class Database {
                     inst.website,
                     inst.lat as latitude,
                     inst.lon as longitude,
-                    ST_DISTANCE(POINT(48.78232, 9.17702), POINT(inst.lat, inst.lon)) as distance,
+                    (ST_DISTANCE(POINT(48.78232, 9.17702), POINT(inst.lat, inst.lon)) * 111195) as distance,
                     CONCAT('[',IFNULL(CONVERT(GROUP_CONCAT(DISTINCTROW JSON_OBJECT(
                             'day', oh.day, 'start_time',
                             oh.start_time, 'end_time',
@@ -152,6 +154,12 @@ export class Database {
     }
 
     public getInstitutions(latitude: number, longitude: number, area: number): Promise<IInstitution[]> {
+        // getBoundsOfDistance
+        const boundsOfDistance = getBoundsOfDistance({
+            latitude,
+            longitude
+        }, area);
+
         return new Promise((resolve, reject) => {
             this.connection.query(
                 `SELECT
@@ -189,16 +197,15 @@ export class Database {
                 resources as res,
                 waiting_times as wt
             WHERE
-                inst.lat + 0.1 < ?
-                AND inst.lon + 0.1 < ?
-                AND inst.lat - 0.1 < ?
-                AND inst.lon - 0.1 < ?
-                AND ST_Distance(POINT(?, ?), POINT(inst.lat, inst.lon)) < ?
+                inst.lat >= ?
+                AND inst.lon >= ?
+                AND inst.lat <= ?
+                AND inst.lon <= ?
                 AND oh.institution_id = inst.id
                 AND res.institution_id = inst.id
                 AND wt.institution_id = inst.id
             GROUP BY inst.id ORDER BY distance`,
-                [latitude, longitude, latitude, longitude, latitude, longitude, latitude, longitude, area],
+                [latitude, longitude, boundsOfDistance[0].latitude, boundsOfDistance[0].longitude, boundsOfDistance[1].latitude, boundsOfDistance[1].longitude],
                 (error, dbRecords) => {
                     if (error) {
                         reject(error);
@@ -210,18 +217,22 @@ export class Database {
                         return;
                     }
 
-                    const result: IInstitution[] = this.mapInstitutions(dbRecords);
+                    const result: IInstitution[] = this.mapInstitutions(dbRecords, latitude, longitude);
                     resolve(result);
                 }
             );
         });
     }
 
-    mapInstitutions(records: any[]): IInstitution[] {
+    mapInstitutions(records: any[], latitude?: number, longitude?: number): IInstitution[] {
         return records.map(value => {
             value.opening_hours = JSON.parse(value.opening_hours);
             value.resources = JSON.parse(value.resources);
             value.waiting_times = JSON.parse(value.waiting_times);
+            if (latitude && longitude) {
+                value.distance = getDistance({latitude, longitude}, {latitude: value.latitude, longitude: value.longitude});
+            }
+
             return value;
         });
     }
