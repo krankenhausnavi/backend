@@ -1,0 +1,7 @@
+{
+  "hostname": "127.0.0.1",
+  "username": "root",
+  "password": "wirvsvirus",
+  "port": 3306,
+  "database": "navi"
+}

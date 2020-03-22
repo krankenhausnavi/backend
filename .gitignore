@@ -10,3 +10,14 @@ jspm_packages
 
 # idea
 .idea
+
+# Remove production configs
+config/*.prod.json
+
+# Remove build
+.build
+build
+
+# Remove configs
+config/*
+!config/*.example.json

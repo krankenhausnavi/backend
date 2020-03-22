@@ -7,7 +7,7 @@ service:
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
-    includeModules: false
+    includeModules: true
     excludeFiles: src/**/*.test.js
 
 # Add the serverless-webpack plugin
@@ -19,12 +19,18 @@ provider:
   name: aws
   runtime: nodejs12.x
   memorySize: 256
-  timeout: 3
+  timeout: 6
   versionFunctions: false
+  stage: dev
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    RDS_HOSTNAME: ${file(./config/database.${self:provider.stage}.json):hostname}
+    RDS_USERNAME: ${file(./config/database.${self:provider.stage}.json):username}
+    RDS_PASSWORD: ${file(./config/database.${self:provider.stage}.json):password}
+    RDS_PORT: ${file(./config/database.${self:provider.stage}.json):port}
+    RDS_DATABASE: ${file(./config/database.${self:provider.stage}.json):database}
 
 functions:
   find-institutions:

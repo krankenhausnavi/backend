@@ -54,7 +54,7 @@ export class Database {
             const connection = await this.promisedConnect();
             return new Database(connection);
         } catch (e) {
-            throw new Error('Connecting to database failed!');
+            throw new Error('Connecting to database failed! Error: ' + JSON.stringify(e));
         }
     }
 
@@ -78,7 +78,8 @@ export class Database {
             user: process.env.RDS_USERNAME,
             password: process.env.RDS_PASSWORD,
             port: parseInt(process.env.RDS_PORT, 10),
-            database: process.env.RDS_DATABASE
+            database: process.env.RDS_DATABASE,
+            timeout: 10
         };
     }
 
