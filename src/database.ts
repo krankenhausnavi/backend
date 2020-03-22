@@ -144,11 +144,10 @@ export class Database {
                         return;
                     }
 
-                    const result: IInstitution = dbRecords[0];
+                    const result: IInstitution = this.mapInstitutions(dbRecords)[0];
                     resolve(result);
-
                 }
-                );
+            );
         });
     }
 
@@ -198,7 +197,7 @@ export class Database {
                 AND oh.institution_id = inst.id
                 AND res.institution_id = inst.id
                 AND wt.institution_id = inst.id
-            GROUP BY inst.id`,
+            GROUP BY inst.id ORDER BY distance`,
                 [latitude, longitude, latitude, longitude, latitude, longitude, latitude, longitude, area],
                 (error, dbRecords) => {
                     if (error) {
@@ -211,10 +210,19 @@ export class Database {
                         return;
                     }
 
-                    const result: IInstitution[] = dbRecords;
+                    const result: IInstitution[] = this.mapInstitutions(dbRecords);
                     resolve(result);
                 }
             );
+        });
+    }
+
+    mapInstitutions(records: any[]): IInstitution[] {
+        return records.map(value => {
+            value.opening_hours = JSON.parse(value.opening_hours);
+            value.resources = JSON.parse(value.resources);
+            value.waiting_times = JSON.parse(value.waiting_times);
+            return value;
         });
     }
 
